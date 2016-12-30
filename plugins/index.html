@@ -378,7 +378,7 @@
                 $("#recipes").append('<ul id="list_' + name + '" style="margin-left: 20px">');
                 $.each(recipe.output, function(key, item) {
                     var percent = (item.chance * 100);
-                    $("#list_" + name).append('<li>' item[key] + ' ' + key.replace(/_/g, ' ') + percent.toString() + '%</li>');
+                    $("#list_" + name).append('<li>' + item[key] + ' ' + key.replace(/_/g, ' ') + percent.toString() + '%</li>');
                 });
                 $("#recipes").append('</ul>');
             }
