@@ -374,7 +374,13 @@
                 var percent = (recipe.health_gained * 100) / totalHealth;
                 $("#recipes").append('<h4 style="margin-left: 20px">Repairs ' + percent.toString() + '% health</h4>');
             } else  if(recipe.type === "RANDOM") {
-                
+                $("#recipes").append('<h4 id="out_' + name + '" style="margin-left: 20px">Output: </h4>');
+                $("#recipes").append('<ul id="list_' + name + '" style="margin-left: 20px">');
+                $.each(recipe.output, function(key, item) {
+                    var percent = (item.chance * 100);
+                    $("#list_" + name).append('<li>' item[key] + ' ' + key.replace(/_/g, ' ') + percent.toString() + '%</li>');
+                });
+                $("#recipes").append('</ul>');
             }
             var prod_time = config.default_update_time;
             if(recipe.production_time) {
