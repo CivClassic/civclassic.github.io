@@ -373,6 +373,13 @@
             } else if(recipe.type === "REPAIR") {
                 var percent = (recipe.health_gained * 100) / totalHealth;
                 $("#recipes").append('<h4 style="margin-left: 20px">Repairs ' + percent.toString() + '% health</h4>');
+            } else  if(recipe.type === "RANDOM") {
+                $("#recipes").append('<h4 id="out_' + name + '" style="margin-left: 20px">Outputs: </h4>');
+                $("#recipes").append('<ul id="list_' + name + '">');
+                $.each(recipe.outputs, function(key, out) {
+                    $("#list_" + name).append('<li>' + (out.chance * 100) + '% ' + out[1] + '</li>');
+                }
+                $("#recipes").append('</ul>');
             }
             var prod_time = config.default_update_time;
             if(recipe.production_time) {
