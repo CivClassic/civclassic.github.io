@@ -332,15 +332,11 @@
             $.each(recipes, function(name, recipe) {
                 if(recipe.type === "UPGRADE" && recipe.factory === factory.name) {
                     $.each(factories, function(id, f) {
-                        try {
-                        if(f.recipes.includes(name)) {
+                        if(f.recipes !== undefined && f.recipes.includes(name)) {
                             $("#setup").html('Upgrades from <a href="" onclick="selectFactory(this); return false;" id="' + f.name + '">' + f.name + "</a> with ");
                             $.each(recipe.input, function(key, item) {
                                 $("#setup").append(item.amount + " " + key.replace(/_/g, ' ') + ', ');
                             });
-                        }
-                        } catch (e) {
-                            Console.log(e);
                         }
                     });
                 }
