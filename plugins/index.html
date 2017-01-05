@@ -377,7 +377,7 @@
                 $("#recipes").append('<h4 id="out_' + name + '" style="margin-left: 20px">Outputs: </h4>');
                 $("#recipes").append('<ul id="list_' + name + '" style="margin-left: 20px">');
                 $.each(recipe.outputs, function(key, item) {
-                    var percent = item.chance * 100
+                    var percent = item.chance * 100;
                     if(percent < 0) {
                         percent = percent.toPrecision(1);
                     }
