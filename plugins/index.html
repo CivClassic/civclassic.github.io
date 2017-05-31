@@ -97,7 +97,7 @@
                 <div class="col-lg-12 text-center">
                     <h2>PrisonPearl - Take justice into your own hands</h2>
                     <p class="lead">When you kill a player with an ender pearl in your hotbar they'll be sent to the end. They'll remain there until you free them or they're freed by others. Be wary because the person you imprison can call on others to help them break free. Used in conjunction with Citadel it's a powerful tool to take power into your own hands.</p>
-                    <p>You can play on as many alts as you want, but if you're pearled on any of them, the others will be unable to log in until your account is freed</p>
+                    <p class="lead">You can play on as many alts as you want, but if you're pearled on any of them, the others will be unable to log in until your account is freed <span id="pearlcost"></span></p>
                 </div>
             </div>
             <!-- /.row -->
@@ -112,6 +112,7 @@
                 <div class="col-lg-12 text-center">
                     <h2>Bastion - Protect your claims from grief</h2>
                     <p class="lead">Bastions will create a field above and around them where others cannot place blocks. This provides a powerful anti-grief tool to keep your city clean.</p>
+                    <p class="lead" id="bastioninfo"></p>
                 </div>
             </div>
             <!-- /.row -->
@@ -182,7 +183,7 @@
             <div class="row">
                 <div class="col-lg-12 text-center">
                     <h2>Enchanting - Reverted to 1.7</h2>
-                    <p class="lead">There are a few important changes to enchanting on CivClassic. Experience is mostly vanilla but at heavily reduced rates, and spawners will stop working after a while. The actual enchanting of items wont require lapis, but it will take the full amount of experience.</p>
+                    <p class="lead">There are a few important changes to enchanting on CivClassic. Experience is made through factories. The actual enchanting of items wont require lapis, but it will take the full amount of experience. Items will be repairable forever but will be expensive to repair in the long run, capping out at 39 levels with no reset.</p>
                 </div>
             </div>
             <!-- /.row -->
@@ -238,7 +239,7 @@
             <div class="row">
                 <div class="col-lg-12 text-center">
                     <h2>Miscellaneous</h2>
-                    <p class="lead">The Nether has a ratio of 1:4, there's a circular world border with a radius of 10k, and obsidian generators are re-enabled using redstone.</p>
+                    <p class="lead">There will be no nether, there's a circular world border with a radius of 13k, and obsidian generators are re-enabled.</p>
                 </div>
             </div>
             <!-- /.row -->
@@ -306,7 +307,7 @@
     $(document).ready(function() {
         $("#factories").hide();
         $("#citadelcontainer").hide();
-        var fmod = "https://raw.githubusercontent.com/CivClassic/FactoryMod/master/src/main/resources/configCivclassic.yml";
+        var fmod = "https://raw.githubusercontent.com/CivClassic/factorymod/master/src/main/resources/configCivclassic.yml";
         $.get(fmod, function(data) {
             config = jsyaml.load(data);
             factories = config.factories;
@@ -316,6 +317,22 @@
                 $("#factorylist").append('<tr><td><a href="#FactoryMod" onclick="selectFactory(this); return false;" id="' + key + '">' + value.name + '</a></td></tr>');
             });
             loadFactory(factories[Object.keys(factories)[0]]);
+        });
+
+        var pp = "https://raw.githubusercontent.com/CivClassic/Configs/master/prisonpearl.yml";
+        $.get(pp, function(data) {
+            var ppconf = jsyaml.load(data);
+            var resource = ppconf.upkeep.resource;
+            var amt = ppconf.upkeep.quantity;
+            $('#pearlcost').html("Pearls cost " + amt + " " + resource.toLowerCase().replace(/_/, ' ') + " per day in the same container as the pearl or the pearl will be freed.");
+        })
+
+        var bastions = "https://raw.githubusercontent.com/CivClassic/Configs/master/bastion.yml";
+        $.get(bastions, function(data) {
+            var bconf = jsyaml.load(data);
+            var base = bconf.bastions.basic;
+            var info = "Bastions are a special " + base.block.material.toLowerCase().replace(/_/, ' ') + " with the name " + base.block.name + " and the lore \"" + base.block.lore + "\" which can be made in a factory. The shape is a " + (base.squarefield ? "square" : "circle") + " with a radius of " + base.effectRadius + " blocks and " + (base.includeY ? "includes" : "does not include") + " the y-level the bastion is on. Bastions will prevent block placement, but each block place will erode " + base.blocksToErode + " from the bastion's durability; This can only be done by a single player every " + (base.placementCooldown / 1000) + " seconds. Bastions will " + (base.pearls.block ? ("block pearls " + (base.pearls.blockMidair ? "midair" : "when they land") + (base.pearls.requireMaturity ? " and require the bastion to be mature" : "")) : "not block pearls") + " and will " + (base.elytra.block ? "block elytra" + (base.elytra.requireMaturity ? " when the bastion is mature" : "") : "not block elytra") + ".";
+            $('#bastioninfo').html(info);
         });
     });
     
