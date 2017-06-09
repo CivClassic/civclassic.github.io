@@ -310,6 +310,9 @@
         factories = config.factories;
         recipes = config.recipes;
         totalHealth = config.default_health;
+        $.each(factories, function(key, value) {
+            $("#factorylist").append('<tr><td><a href="#FactoryMod" onclick="selectFactory(this); return false;" id="' + key + '">' + value.name + '</a></td></tr>');
+        });
         loadFactory(factories[Object.keys(factories)[0]]);
 
         var pp = "https://raw.githubusercontent.com/CivClassic/Configs/master/prisonpearl.yml";
