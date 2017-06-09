@@ -1,4 +1,4 @@
-var factories = {
+var config = {
   "default_update_time": "1s", 
   "default_break_grace_period": "1000d", 
   "default_return_rate": 0.5, 
