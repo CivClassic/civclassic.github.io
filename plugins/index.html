@@ -286,6 +286,7 @@
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/3.7.0/js-yaml.min.js"></script>
     
+    <script src="config.js"></script>
     <!-- Custom Theme JavaScript -->
     <script>
     // Closes the sidebar menu
@@ -302,22 +303,14 @@
     var factories;
     var recipes;
     var totalHealth;
-    var config;
     
     $(document).ready(function() {
         $("#factories").hide();
         $("#citadelcontainer").hide();
-        var fmod = "https://raw.githubusercontent.com/CivClassic/factorymod/master/src/main/resources/configCivclassic.yml";
-        $.get(fmod, function(data) {
-            config = jsyaml.load(data);
-            factories = config.factories;
-            recipes = config.recipes;
-            totalHealth = config.default_health;
-            $.each(factories, function(key, value) {
-                $("#factorylist").append('<tr><td><a href="#FactoryMod" onclick="selectFactory(this); return false;" id="' + key + '">' + value.name + '</a></td></tr>');
-            });
-            loadFactory(factories[Object.keys(factories)[0]]);
-        });
+        factories = config.factories;
+        recipes = config.recipes;
+        totalHealth = config.default_health;
+        loadFactory(factories[Object.keys(factories)[0]]);
 
         var pp = "https://raw.githubusercontent.com/CivClassic/Configs/master/prisonpearl.yml";
         $.get(pp, function(data) {
