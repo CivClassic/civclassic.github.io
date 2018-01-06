@@ -141,21 +141,7 @@
                 <div class="col-lg-12">
                     <h2 class="text-center">FactoryMod - Efficient production</h2>
                     <p class="lead text-center">Factories lets you craft items more efficiently after a slight startup cost. This allows for a more extended tech tree than vanilla Minecraft and allows you to have lasting infrastructure.</p>
-                    <center><button onclick="showFactories(); return false;" class="btn btn-light" id="showfactories">Show Factories</button></center>
-                    <br>
-                    <div id="factories" style="overflow: hidden;">
-                        <div id="sidebar" style="float: left; width: 200px; background-color: #e6e6e6;">
-                            <input style="width: 100%; color: #000" type="text" id="search" onkeyup="searchfunction()" placeholder="Search..."></input>
-                            <table style="width: 100%; display: block; overflow-y: scroll; height: 500px" class="table table-bordered" id="factorylist"></table>
-                        </div>
-                        <div id="main" style="color: #000; overflow: hidden;border-radius: 0px; height: 546px" class="well">
-                            <h1 id="factoryName">Factory</h1>
-                            <h2 id="setup">SetupCost:</h2>
-                            <h2>Recipes:</h2>
-                            <div id="recipes" style="margin-left: 20px; overflow-y: scroll" class="pre-scrollable"></div>
-                        </div>
-                        <div style="clear: both;"></div>
-                    </div>
+                    <center><a href="https://factorymod.github.io/civclassic" target="_blank" class="btn btn-light" id="showfactories">Factory Config</button></center>
                 </div>
             </div>
             <!-- /.row -->
@@ -285,8 +271,6 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/3.7.0/js-yaml.min.js"></script>
-    
-    <script src="config.js"></script>
     <!-- Custom Theme JavaScript -->
     <script>
     // Closes the sidebar menu
@@ -300,21 +284,8 @@
         $("#sidebar-wrapper").toggleClass("active");
     });
     
-    var factories;
-    var recipes;
-    var totalHealth;
-    
     $(document).ready(function() {
-        $("#factories").hide();
         $("#citadelcontainer").hide();
-        factories = config.factories;
-        recipes = config.recipes;
-        totalHealth = config.default_health;
-        $.each(factories, function(key, value) {
-            $("#factorylist").append('<tr><td><a href="#FactoryMod" onclick="selectFactory(this); return false;" id="' + key + '">' + value.name + '</a></td></tr>');
-        });
-        loadFactory(factories[Object.keys(factories)[0]]);
-
         var pp = "https://raw.githubusercontent.com/CivClassic/Configs/master/prisonpearl.yml";
         $.get(pp, function(data) {
             var ppconf = jsyaml.load(data);
@@ -331,135 +302,6 @@
             $('#bastioninfo').html(info);
         });
     });
-    
-    function loadFactory(factory) {
-        $("#recipes").scrollTop(0);
-        $("#factoryName").text(factory.name);
-        $("#recipes").html("");
-        $("#setup").html("");
-        if(factory.setupcost) {
-            $("#setup").html("Setup Cost: ");
-            $.each(factory.setupcost, function(key, value){
-                $("#setup").append(value.amount + " " + key.replace(/_/g, ' ') + ", ");
-            });
-        } else {
-            $.each(recipes, function(name, recipe) {
-                if(recipe.type === "UPGRADE" && recipe.factory === factory.name) {
-                    $.each(factories, function(id, f) {
-                        if(f.recipes !== undefined && f.recipes.includes(name)) {
-                            $("#setup").html('Upgrades from <a href="" onclick="selectFactory(this); return false;" id="' + f.name + '">' + f.name + "</a> with ");
-                            $.each(recipe.input, function(key, item) {
-                                $("#setup").append(item.amount + " " + key.replace(/_/g, ' ') + ', ');
-                            });
-                        }
-                    });
-                }
-            });
-        }
-        var setupCost = $("#setup").html();
-        setupCost = setupCost.substring(0, setupCost.length - 2);
-        $("#setup").html(setupCost);
-        var fuelName = Object.keys(config.default_fuel)[0];
-        if(factory.fuel) {
-            fuelName = Object.keys(factory.fuel)[0];
-        }
-        $.each(factory.recipes, function(i, name) {
-            var recipe = recipes[name];
-            $("#recipes").append('<div style="margin: 0 auto;">');
-            $("#recipes").append('<h3>' + recipe.name + '</h3>');
-            $("#recipes").append('<h4 id="in_' + name + '" style="margin-left: 20px">Input: </h4>');
-            $.each(recipe.input, function(key, item) {
-                $("#in_" + name).append(item.amount + " " + key.replace(/_/g, ' ') + ', ');
-            });
-            var text = $("#in_" + name).html();
-            text = text.substring(0, text.length - 2);
-            $("#in_" + name).html(text);
-            if(recipe.type === "PRODUCTION") {
-                $("#recipes").append('<h4 id="out_' + name + '" style="margin-left: 20px">Output: </h4>');
-                $.each(recipe.output, function(key, item) {
-                    $("#out_" + name).append(item.amount + " " + key.replace(/_/g, ' ') + ', ');
-                });
-                var txt = $("#out_" + name).html();
-                txt = txt.substring(0, txt.length - 2);
-                $("#out_" + name).html(txt);
-            } else if(recipe.type === "UPGRADE") {
-                $("#recipes").append('<h4 style="margin-left: 20px">Upgrades to: <a href="" onclick="selectFactory(this); return false;" id="' + recipe.factory + '">' + recipe.factory + '</a></h4>');
-            } else if(recipe.type === "REPAIR") {
-                var percent = (recipe.health_gained * 100) / totalHealth;
-                $("#recipes").append('<h4 style="margin-left: 20px">Repairs ' + percent.toString() + '% health</h4>');
-            } else  if(recipe.type === "RANDOM") {
-                $("#recipes").append('<h4 id="out_' + name + '" style="margin-left: 20px">Outputs: </h4>');
-                $("#recipes").append('<ul id="list_' + name + '" style="margin-left: 20px">');
-                $.each(recipe.outputs, function(key, item) {
-                    var percent = item.chance * 100;
-                    if(percent < 0) {
-                        percent = percent.toPrecision(1);
-                    }
-                    percent = percent.toString() + '%';
-                    $("#list_" + name).append('<li>' + item[key].amount + ' ' + key.replace(/_/g, ' ') + ' with ' + percent + ' chance</li>');
-                });
-                $("#recipes").append('</ul>');
-            }
-            var prod_time = config.default_update_time;
-            if(recipe.production_time) {
-                prod_time = recipe.production_time;
-            }
-            $("#recipes").append('<h4 style="margin-left: 20px"> Production Time: ' + prod_time + '</h4>');
-            var interval = parseInt(config.default_fuel_consumption_intervall);
-            if(factory.fuel_consumption_intervall) {
-                interval = parseInt(factory.fuel_consumption_intervall);
-            }
-            var famount = parseInt(prod_time) / interval;
-            $("#recipes").append('<h4 style="margin-left: 20px"> Fuel: ' + famount + " " + fuelName + '</h4>');
-            $("#recipes").append('</div>');
-        });
-    }
-    
-    function selectFactory(link) {
-        var factory = factories[link.id];
-        if(!factory) {
-            $.each(factories, function(key, value) {
-                if(value.name === link.id) {
-                    loadFactory(value);
-                }
-            });
-        } else {
-            loadFactory(factory);
-        }
-    }
-    
-    var down = false;
-    function showFactories() {
-        if(down) {
-            $("#factories").slideUp('fast', function() {
-                down = false;
-            });
-            $("#showfactories").html('Show Factories');
-        } else {
-            $("#factories").slideDown('fast', function() {
-                down = true;
-            });
-            $("#showfactories").html('Hide Factories');
-        }
-    }
-    
-    function searchfunction() {
-        var input, filter, table, tr, td, i;
-        input = document.getElementById("search");
-        filter = input.value.toUpperCase();
-        table = document.getElementById("factorylist");
-        tr = table.getElementsByTagName("tr");
-        for(i = 0; i < tr.length; i++) {
-            td = tr[i].getElementsByTagName("td")[0];
-            if(td) {
-                if(td.innerHTML.toUpperCase().indexOf(filter) > -1) {
-                    tr[i].style.display = "";
-                } else {
-                    tr[i].style.display = "none";
-                }
-            }
-        }
-    }
     
     // Scrolls to the selected menu item on the page
     $(function() {
